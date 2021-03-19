@@ -6,6 +6,17 @@ public class AuthToken {
     private String authtoken;
     private String username;
     private String password;
+    private String personID;
+
+    public String getPersonID()
+    {
+        return personID;
+    }
+
+    public void setPersonID(String personID)
+    {
+        this.personID = personID;
+    }
 
     public String getAuthtoken()
     {
