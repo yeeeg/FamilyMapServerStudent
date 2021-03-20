@@ -54,7 +54,8 @@ public class LoginHandler implements HttpHandler {
         }
         catch (IOException | DataAccessException e)
         {
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, 0);
+            //FIXME:Changed from HTTP_INTERNAL_ERROR to BAD_REQUEST
+            exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
 
             OutputStream responseBody = exchange.getResponseBody();
             //write response

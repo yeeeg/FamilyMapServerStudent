@@ -1,8 +1,15 @@
 package Service;
+import DAO.AuthTokenDAO;
+import DAO.DataAccessException;
+import DAO.Database;
 import DAO.EventDAO;
 import Model.Event;
 import Service.Result.*;
 import Model.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.sql.Connection;
 import java.util.ArrayList;
 
 /**
@@ -10,40 +17,53 @@ import java.util.ArrayList;
  */
 public class GetEvents
 {
-    EventDAO db;
-    EventsResult eventsResult;
-    EventResult eventResult;
-    /**
-     * URL Path: /event
-     *
-     * Description: Returns ALL events for ALL family members of the current user.
-     * The current user is determined from the provided auth token.
-     */
-    public GetEvents(String Auth_Token)
+    public EventsResult result;
+    String username;
+    Database db;
+    public Gson gson;
+
+    public GetEvents()
     {
-        //for each event under user
-        //find event and pass to EventResult
-        //add EventResult to EventsResult
-        //get each event from user specified with auth token
+        db = new Database();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setPrettyPrinting();
+        gson = gsonBuilder.create();
     }
-
-    /**
-     * URL Path: /event/[eventID]
-     *
-     * Example: /event/251837d7
-     *
-     * Description: Returns the single Event object with the specified ID.
-     *
-     * Errors: Invalid auth token, Invalid eventID parameter, Requested event does not belong
-     * to this user, Internal server error
-     *
-     * @param eventID The ID of the specified event.
-     */
-    public GetEvents(String Auth_Token, String eventID)
+    public void getAssociatedUN(String authtoken) throws DataAccessException
     {
-        //find event and pass to EventResult
-        //do something to get specified event from DB
+        try
+        {
+            Connection connection = db.openConnection();
+            db.authTokenDAO = new AuthTokenDAO(connection);
+            AuthToken auth = db.authTokenDAO.find(authtoken);
+            db.closeConnection(true);
+            username = auth.getUsername();
+        }
+        catch (DataAccessException e)
+        {
+            db.closeConnection(false);
+            result = new EventsResult(e.getMessage(), false);
+            throw new DataAccessException(e.getMessage());
+        }
     }
+    public void doGet() throws DataAccessException
+    {
+        try
+        {
+            Connection connection = db.openConnection();
 
+            //get eventID associated event object from db
+            db.eventDAO = new EventDAO(connection);
+            ArrayList<Event> events = db.eventDAO.getEvents(username);
+            db.closeConnection(true);
+            result = new EventsResult(events, true);
+        }
+        catch (DataAccessException e)
+        {
+            db.closeConnection(false);
 
+            result = new EventsResult(e.getMessage(), false);
+            throw new DataAccessException(e.getMessage());
+        }
+    }
 }

@@ -5,11 +5,10 @@ import java.util.Objects;
 public class Event
 {
     String eventID;
-    //FIXME: Changed userName to associatedUsername, may cause some issues with gson idk
     String associatedUsername;
     String personID;
-    float latitude;
-    float longitude;
+    Float latitude;
+    Float longitude;
     String country;
     String city;
     String eventType;
@@ -34,6 +33,11 @@ public class Event
         this.city = city;
         this.eventType = eventType;
         this.year = year;
+    }
+
+    public Event()
+    {
+
     }
 
     public void updateEvent(String eventID, String username, String personID, String eventType, int year)

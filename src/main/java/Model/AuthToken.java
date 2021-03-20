@@ -8,6 +8,16 @@ public class AuthToken {
     private String password;
     private String personID;
 
+
+    public AuthToken() {}
+
+    public AuthToken(String authtoken, String username, String password)
+    {
+        this.authtoken = authtoken;
+        this.username = username;
+        this.password = password;
+    }
+
     public String getPersonID()
     {
         return personID;

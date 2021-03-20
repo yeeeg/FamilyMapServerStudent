@@ -7,6 +7,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.util.List;
 
 public class EventHandler implements HttpHandler {
@@ -23,24 +24,49 @@ public class EventHandler implements HttpHandler {
                 String url = exchange.getRequestURI().toString();
 
                 //get eventID from url
-                int i = url.lastIndexOf("/");
                 String eventID = url.substring(7);
 
+                //check auth token and event id
                 List<String> auth = reqHeaders.get("Authorization");
                 String providedAuth = auth.get(0);
                 getEvent = new GetEvent(eventID);
-
+                getEvent.checkAuth(providedAuth);
 
                 //extract json string from http request
                 //get request body input stream and read stream
                 InputStream reqBody = exchange.getRequestBody();
                 String reqData = readString(reqBody);
 
+                //get response message
+                OutputStream responseBody = exchange.getResponseBody();
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+
+                //Write response
+                String json = getEvent.gson.toJson(getEvent.result);
+                writeString(json, responseBody);
+                responseBody.close();
+                exchange.close();
+
+            }
+            else
+            {
+                //got something else instead of POST
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
             }
         }
-        catch (IOException e)
+        catch (IOException | DataAccessException e)
         {
+            //fixme
+            exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
 
+            OutputStream responseBody = exchange.getResponseBody();
+            //Write response
+            String json = getEvent.gson.toJson(getEvent.result);
+            writeString(json, responseBody);
+            responseBody.close();
+            exchange.close();
+
+            e.printStackTrace();
         }
     }
 

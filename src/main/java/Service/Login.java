@@ -42,6 +42,7 @@ public class Login
             //generate authtoken
             db.userDAO = new UserDAO(connection);
             authToken = db.userDAO.login(request.user);
+
             //insert authtoken into db
             db.authTokenDAO = new AuthTokenDAO(connection);
             db.authTokenDAO.insert(authToken);
@@ -53,6 +54,7 @@ public class Login
             db.closeConnection(false);
             result = new LoginResult();
             result.failure(e.toString());
+            throw new DataAccessException(e.toString());
         }
     }
 }

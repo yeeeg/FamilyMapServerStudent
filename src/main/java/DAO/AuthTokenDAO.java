@@ -2,6 +2,7 @@ package DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import Model.*;
@@ -30,11 +31,46 @@ public class AuthTokenDAO {
             throw new DataAccessException("Error encountered while inserting authtoken into the database " + e.toString());
         }
     }
-    public AuthToken find(String authtoken)
+    public AuthToken find(String authtoken) throws DataAccessException
     {
-        //TODO:ADD THIS METHOD
+        AuthToken authToken;
+        String sql = "SELECT * FROM auth_tokens WHERE auth_token = ?;";
+        ResultSet rs = null;
 
-        return null;
+        try (PreparedStatement stmt = connection.prepareStatement(sql))
+        {
+            stmt.setString(1, authtoken);
+            rs = stmt.executeQuery();
+            if (rs.next())
+            {
+                authToken = new AuthToken(rs.getString("auth_token"),
+                        rs.getString("a_UN"), rs.getString("password"));
+            }
+            else
+            {
+                throw new DataAccessException("Error: Invalid auth token.");
+            }
+        }
+        catch(SQLException e)
+        {
+            throw new DataAccessException(e.getMessage());
+        }
+        finally
+        {
+            if (rs != null)
+            {
+                try
+                {
+                    rs.close();
+                }
+                catch (SQLException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return authToken;
     }
     public void delete(String username) throws DataAccessException
     {
@@ -47,6 +83,44 @@ public class AuthTokenDAO {
         catch (SQLException e)
         {
             throw new DataAccessException("Error deleting from auth_tokens");
+        }
+    }
+    public boolean contains(String authtoken) throws DataAccessException
+    {
+        AuthToken authToken;
+        String sql = "SELECT * FROM auth_tokens WHERE auth_token = ?;";
+        ResultSet rs = null;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql))
+        {
+            stmt.setString(1, authtoken);
+            rs = stmt.executeQuery();
+            if (rs.next())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch(SQLException e)
+        {
+            throw new DataAccessException(e.getMessage());
+        }
+        finally
+        {
+            if (rs != null)
+            {
+                try
+                {
+                    rs.close();
+                }
+                catch (SQLException e)
+                {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

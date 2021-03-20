@@ -1,10 +1,9 @@
 package DAO;
 
-import java.sql.Connection;
+import java.sql.*;
+
 import Model.*;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.*;
 
 public class EventDAO {
@@ -15,23 +14,101 @@ public class EventDAO {
         this.connection = connection;
     }
 
-    public boolean openDB()
+    public Event find(String eventID) throws DataAccessException
     {
-        return true;
-    }
-    public boolean closeDB()
-    {
-        return true;
+        Event event;
+        String sql = "SELECT * FROM events WHERE event_id = ?;";
+        ResultSet rs = null;
+        try (PreparedStatement stmt = connection.prepareStatement(sql))
+        {
+            stmt.setString(1, eventID);
+            rs = stmt.executeQuery();
+            if (rs.next())
+            {
+                event = new Event(rs.getString("event_id"), rs.getString("a_UN"),
+                        rs.getString("person_ID"), rs.getFloat("lat"),
+                        rs.getFloat("lon"), rs.getString("country"),
+                        rs.getString("city"), rs.getString("event_type"),
+                        rs.getInt("year"));
+            }
+            else
+            {
+                throw new DataAccessException("Error: Invalid eventID parameter.");
+            }
+        }
+        catch(SQLException | DataAccessException e)
+        {
+            throw new DataAccessException(e.getMessage());
+        }
+        finally
+        {
+            if (rs != null)
+            {
+                try
+                {
+                    rs.close();
+                }
+                catch (SQLException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return event;
     }
 
-    public Event getEvent(String eventID)
+    public ArrayList<Event> getEvents(String a_UN) throws DataAccessException
     {
-        return null;
-    }
-
-    public ArrayList<Event> getEvents(AuthToken authToken)
-    {
-        return null;
+        ArrayList<Event> events = new ArrayList<>();
+        String sql = "SELECT * FROM events WHERE a_UN = ?;";
+        ResultSet rs = null;
+        try (PreparedStatement stmt = connection.prepareStatement(sql))
+        {
+            stmt.setString(1, a_UN);
+            rs = stmt.executeQuery();
+            ResultSetMetaData meta = rs.getMetaData();
+            if (rs.next())
+            {
+                events.add(new Event(rs.getString("event_id"), rs.getString("a_UN"),
+                        rs.getString("person_ID"), rs.getFloat("lat"),
+                        rs.getFloat("lon"), rs.getString("country"),
+                        rs.getString("city"), rs.getString("event_type"),
+                        rs.getInt("year")));
+                while (rs.next())
+                {
+                    events.add(new Event(rs.getString("event_id"), rs.getString("a_UN"),
+                            rs.getString("person_ID"), rs.getFloat("lat"),
+                            rs.getFloat("lon"), rs.getString("country"),
+                            rs.getString("city"), rs.getString("event_type"),
+                            rs.getInt("year")));
+                }
+            }
+            else
+            {
+                //FIXME this is a custom error
+                throw new DataAccessException("Error: No events exist for user.");
+            }
+        }
+        catch(SQLException | DataAccessException e)
+        {
+            throw new DataAccessException(e.getMessage());
+        }
+        finally
+        {
+            if (rs != null)
+            {
+                try
+                {
+                    rs.close();
+                }
+                catch (SQLException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return events;
     }
 
     public void insert(Event event) throws DataAccessException

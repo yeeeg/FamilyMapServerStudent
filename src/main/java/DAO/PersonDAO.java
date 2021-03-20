@@ -1,9 +1,6 @@
 package DAO;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 import Model.*;
 
@@ -33,7 +30,8 @@ public class PersonDAO {
             }
             else
             {
-                throw new DataAccessException("Person does not exist.");
+                //fixme
+                throw new DataAccessException("Error: Invalid personID parameter");
             }
         }
         catch(SQLException e)
@@ -57,9 +55,56 @@ public class PersonDAO {
 
         return person;
     }
-    public ArrayList<Person> getPersons(AuthToken authToken)
+    public ArrayList<Person> getPersons(String a_UN) throws DataAccessException
     {
-        return null;
+        ArrayList<Person> persons = new ArrayList<>();
+        String sql = "SELECT * FROM persons WHERE a_UN = ?;";
+        ResultSet rs = null;
+        try (PreparedStatement stmt = connection.prepareStatement(sql))
+        {
+            stmt.setString(1, a_UN);
+            rs = stmt.executeQuery();
+            ResultSetMetaData meta = rs.getMetaData();
+            if (rs.next())
+            {
+                persons.add(new Person(rs.getString("person_id"), rs.getString("a_UN"),
+                        rs.getString("first_name"), rs.getString("last_name"),
+                        rs.getString("gender"), rs.getString("father_id"),
+                        rs.getString("mother_id"), rs.getString("spouse_id")));
+
+                while (rs.next())
+                {
+                    persons.add(new Person(rs.getString("person_id"), rs.getString("a_UN"),
+                            rs.getString("first_name"), rs.getString("last_name"),
+                            rs.getString("gender"), rs.getString("father_id"),
+                            rs.getString("mother_id"), rs.getString("spouse_id")));
+                }
+            }
+            else
+            {
+                //FIXME this is a custom error
+                throw new DataAccessException("Error: No persons exist for user.");
+            }
+        }
+        catch(SQLException | DataAccessException e)
+        {
+            throw new DataAccessException(e.getMessage());
+        }
+        finally
+        {
+            if (rs != null)
+            {
+                try
+                {
+                    rs.close();
+                }
+                catch (SQLException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return persons;
     }
 
     public void insert(Person person) throws DataAccessException
@@ -87,9 +132,7 @@ public class PersonDAO {
             throw new DataAccessException("Error encountered while inserting Person into the database " + e.toString());
         }
     }
-    private void update(String sql)
-    {
-    }
+
     public void delete(String username) throws DataAccessException
     {
         String sql = "DELETE FROM persons WHERE a_UN = ?;";

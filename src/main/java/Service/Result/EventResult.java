@@ -11,21 +11,35 @@ public class EventResult
     String associatedUsername;
     String eventID;
     String personID;
-    String lat;
-    String lon;
+    float latitude;
+    float longitude;
     String country;
     String city;
     String eventType;
-    String year;
+    Integer year;
     String message;
     boolean success;
 
-    /**
-     * Constructor to get parameters from event that will be used to create json body in handler
-     * @param event The event that will be used to create the parameters
-     */
-    public EventResult(Event event)
+    public EventResult() {}
+
+    public EventResult(Event event, boolean success)
     {
-        //generate body of json object for event
+        this.associatedUsername = event.getAssociatedUsername();
+        this.eventID = event.getEventID();
+        this.personID = event.getPersonID();
+        this.latitude = event.getLatitude();
+        this.longitude = event.getLongitude();
+        this.country = event.getCountry();
+        this.city = event.getCity();
+        this.eventType = event.getEventType();
+        this.year = event.getYear();
+        this.success = success;
+        message = null;
+    }
+
+    public EventResult(String message, boolean success)
+    {
+        this.message = message;
+        this.success = success;
     }
 }

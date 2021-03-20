@@ -49,7 +49,8 @@ public class ClearHandler implements HttpHandler
         }
         catch (IOException |DataAccessException e)
         {
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, 0);
+            //FIXME
+            exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
             OutputStream responseBody = exchange.getResponseBody();
             //write response
             String json = c.gson.toJson(c.getResult());

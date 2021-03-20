@@ -65,18 +65,18 @@ public class UserDAO {
             if (rs.getString("password").equals(user.getPassword()))
             {
                 authtoken.setAuthtoken(UUID.randomUUID().toString());
-                authtoken.setUsername(user.getUsername());
-                authtoken.setPassword(user.getPassword());
-                authtoken.setPersonID((user.getPersonID()));
+                authtoken.setUsername(rs.getString("username"));
+                authtoken.setPassword(rs.getString("password"));
+                authtoken.setPersonID(rs.getString("person_id"));
             }
             else
             {
-                throw new DataAccessException("Incorrect Password");
+                throw new DataAccessException("Error: Incorrect Password");
             }
         }
         catch(SQLException e)
         {
-            throw new DataAccessException("User does not exist");
+            throw new DataAccessException("Error: User does not exist");
         }
         return authtoken;
     }
@@ -136,7 +136,7 @@ public class UserDAO {
             }
             else
             {
-                throw new DataAccessException("User does not exist.");
+                throw new DataAccessException("Error: User does not exist.");
             }
         }
         catch(SQLException e)

@@ -1,6 +1,8 @@
 package Service.Result;
 
 import Model.Event;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 /**
@@ -8,14 +10,19 @@ import java.util.ArrayList;
  */
 public class EventsResult
 {
-    ArrayList<Event> events;
+    ArrayList<Event> data;
+    String message;
+    boolean success;
 
-    /**
-     * Add object to array of objects
-     * @param event
-     */
-    public void addObject(Event event)
+    public EventsResult(ArrayList<Event> events, boolean success)
     {
-        events.add(event);
+        this.data = new ArrayList<>();
+        this.data.addAll(events);
+        this.success = true;
+    }
+    public EventsResult(String message, boolean success)
+    {
+        this.message = message;
+        this.success = success;
     }
 }

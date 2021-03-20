@@ -61,7 +61,8 @@ public class LoadHandler implements HttpHandler {
         }
         catch (IOException | DataAccessException e)
         {
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, 0);
+            //fixme
+            exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
 
             OutputStream responseBody = exchange.getResponseBody();
             //Write response
