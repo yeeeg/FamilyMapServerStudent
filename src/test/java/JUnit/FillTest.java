@@ -1,45 +1,78 @@
 package JUnit;
 
+import DAO.DataAccessException;
+import DAO.Database;
+import DAO.UserDAO;
+import Model.User;
 import Service.Fill;
 import Service.Request.FillRequest;
-import Service.Request.RegisterRequest;
-import Service.Result.RegisterResult;
-import client.Client;
-import client.ServerConnectionException;
-import logs.InitLogs;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
 
-import java.util.logging.Logger;
+import java.sql.Connection;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FillTest
 {
-    private static final Logger logger;
-    private static boolean displayCurrentTest = true;
+    Database db;
+    final static String DEFAULT_REQUEST_BODY = "Request_Body";
+    final static String DEFAULT_USER_NAME = "jerrybro";
+    final static String DEFAULT_PASSWORD = "12345";
+    final static String DEFAULT_PERSON_ID = "jeremiah_brown";
+    final static String DEFAULT_FIRST_NAME = "jeremiah";
+    final static String DEFAULT_LAST_NAME = "brown";
+    final static int DEFAULT_GENERATIONS = 4;
+    final static int DEFAULT_NUM_PEOPLE_GENERATIONS = 31;
+    final static int DEFAULT_NUM_EVENTS_GENERATIONS = 91;
 
-    static {
-        InitLogs.init();
-        logger = Logger.getLogger(Client.class.getName());
-    }
+    FillRequest fillRequest;
+    Fill fill;
 
-    @Test
-    @DisplayName("Death Date Test")
-    public void testDeathDate(TestInfo testInfo)
+    @BeforeEach
+    public void setup() throws DataAccessException
     {
-        printTestName(testInfo);
-        FillRequest fillRequest = new FillRequest("username", 4);
-        Fill fill = new Fill(fillRequest);
+        db = new Database();
+        Connection conn = db.getConn();
+        //add user to database
+        db.clearTables();
+        User user = new User(DEFAULT_USER_NAME, DEFAULT_PASSWORD, "lost@sea.com", DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME,
+                "m", DEFAULT_PERSON_ID);
+        db.userDAO = new UserDAO(conn);
+        db.userDAO.insert(user);
+        db.closeConnection(true);
     }
-
-    /**
-     * Prints the test name
-     *
-     * @param testInfo The name of the test
-     */
-    private void printTestName(TestInfo testInfo) {
-        if (displayCurrentTest) System.out.println("Running " + testInfo.getDisplayName() + "...");
-        logger.info("Running " + testInfo.getDisplayName() + "...");
+    @AfterEach
+    public void tearDown() throws DataAccessException
+    {
+        System.out.println("Cleanup called");
     }
+    @Test
+    public void doFillPass() throws DataAccessException
+    {
+        //initialize fillRequest with default data and create new fill object
+        fillRequest = new FillRequest(DEFAULT_USER_NAME, DEFAULT_GENERATIONS);
+        fill = new Fill(fillRequest);
 
+        //do the fill, should not throw anything
+        assertDoesNotThrow(()->fill.doFill());
+        //test if fill created correct number of people
+        assertEquals(DEFAULT_NUM_PEOPLE_GENERATIONS, fill.getPeople().size());
+        //test if fill created correct number of events
+        assertEquals(DEFAULT_NUM_EVENTS_GENERATIONS, fill.getEventsArray().size());
+    }
+    @Test
+    public void doFillFail() throws DataAccessException
+    {
+        //initialize fillRequest with bad username and create new fill object
+        fillRequest = new FillRequest("BAD_USERNAME", DEFAULT_GENERATIONS);
+        fill = new Fill(fillRequest);
+
+        //fill should fail because user "BAD_USERNAME" is not registered
+        assertThrows(DataAccessException.class, ()->fill.doFill());
+        //people count and event count should be their initialized values of 0
+        assertEquals(0, fill.getPeople().size());
+        assertEquals(0, fill.getEventsArray().size());
+    }
 }

@@ -3,6 +3,9 @@ package Service.Result;
 import Service.Clear;
 import Service.Request.LoadRequest;
 
+/**
+ * Stores results of load service
+ */
 public class LoadResult
 {
     String message;

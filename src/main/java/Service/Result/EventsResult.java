@@ -6,11 +6,11 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 /**
- * Only used when /event is being used instead of /event/eventID
+ * Stores results of Events service
  */
 public class EventsResult
 {
-    ArrayList<Event> data;
+    public ArrayList<Event> data;
     String message;
     boolean success;
 

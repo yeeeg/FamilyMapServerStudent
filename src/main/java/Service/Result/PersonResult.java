@@ -3,6 +3,9 @@ package Service.Result;
 import Model.Person;
 import Model.User;
 
+/**
+ * Stores results of person service
+ */
 public class PersonResult
 {
     String associatedUsername;

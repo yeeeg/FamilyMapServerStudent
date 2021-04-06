@@ -16,6 +16,11 @@ import java.util.Locale;
 public class FileHandler implements HttpHandler
 {
     @Override
+    /**
+     * Handles calls to the / or default file handler api and all related operations
+     * @param exchange The http request object
+     * @throws IOException Signals issues with I/O
+     */
     public void handle(HttpExchange exchange) throws IOException
     {
         try

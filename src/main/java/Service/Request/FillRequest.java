@@ -1,7 +1,7 @@
 package Service.Request;
 
 /**
- * Create the data to be filled in the db
+ * Object to store fill request data
  */
 public class FillRequest
 {

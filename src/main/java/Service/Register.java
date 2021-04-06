@@ -19,11 +19,20 @@ public class Register {
     Database db;
     public Gson gson;
 
+    /**
+     * Constructor for Register
+     * @param request Request body string
+     */
     public Register(RegisterRequest request)
     {
         this.request = request;
         this.db = new Database();
     }
+
+    /**
+     * Adds user and associated person to the database
+     * @throws DataAccessException Issues with database access
+     */
     public void addUser() throws DataAccessException
     {
         try

@@ -13,15 +13,18 @@ import java.sql.Connection;
 import java.util.ArrayList;
 
 /**
- * Handles both /event and /event/[eventID], depending on construction params
+ * Class handles getting of all events associated with username
  */
 public class GetEvents
 {
     public EventsResult result;
-    String username;
+    public String username;
     Database db;
     public Gson gson;
 
+    /**
+     * Constructor for GetEvents
+     */
     public GetEvents()
     {
         db = new Database();
@@ -29,6 +32,12 @@ public class GetEvents
         gsonBuilder.setPrettyPrinting();
         gson = gsonBuilder.create();
     }
+
+    /**
+     * Checks authtoken and gets the username associated with authtoken
+     * @param authtoken Authtoken string
+     * @throws DataAccessException Issues accessing database
+     */
     public void getAssociatedUN(String authtoken) throws DataAccessException
     {
         try
@@ -46,6 +55,11 @@ public class GetEvents
             throw new DataAccessException(e.getMessage());
         }
     }
+
+    /**
+     * Gets all events associated with username member in GetEvents class
+     * @throws DataAccessException Issues with database access
+     */
     public void doGet() throws DataAccessException
     {
         try

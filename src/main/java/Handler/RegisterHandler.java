@@ -14,17 +14,21 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.*;
 import java.net.HttpURLConnection;
 
-//FIXME: Need to get correct error reporting for different calls to different methods (ie. Login, Fill etc.)
-
 public class RegisterHandler implements HttpHandler
 {
     Register register;
+
+    /**
+     * Handles calls to the /user/register api and all related operations
+     * @param exchange The http request object
+     * @throws IOException Signals issues with I/O
+     */
     @Override
     public void handle(HttpExchange exchange) throws IOException
     {
         try
         {
-            if (exchange.getRequestMethod().toUpperCase().equals("POST"))
+            if (exchange.getRequestMethod().equalsIgnoreCase("POST"))
             {
                 //Get http request headers
                 Headers reqHeaders = exchange.getRequestHeaders();
@@ -77,7 +81,6 @@ public class RegisterHandler implements HttpHandler
         }
         catch (IOException | DataAccessException e)
         {
-            //FIXME 500 to 400
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
 
             OutputStream responseBody = exchange.getResponseBody();
@@ -92,6 +95,13 @@ public class RegisterHandler implements HttpHandler
         }
     }
 
+    /**
+     * Reads in the character stream from the http request body and
+     * converts to string
+     * @param is Input stream
+     * @return Request body in string form
+     * @throws IOException Issues with I/O
+     */
     private String readString(InputStream is) throws IOException {
         StringBuilder sb = new StringBuilder();
         InputStreamReader sr = new InputStreamReader(is);
@@ -102,6 +112,13 @@ public class RegisterHandler implements HttpHandler
         }
         return sb.toString();
     }
+
+    /**
+     * Writes string to output stream to be sent in response body
+     * @param str String to write
+     * @param os Output stream
+     * @throws IOException Issues with I/O
+     */
     private void writeString(String str, OutputStream os) throws IOException
     {
         OutputStreamWriter sw = new OutputStreamWriter(os);

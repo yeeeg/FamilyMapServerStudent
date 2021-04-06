@@ -93,20 +93,15 @@ public class User {
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof User)) return false;
         User user = (User) o;
-        return username.equals(user.username) && password.equals(user.password)
-                && email.equals(user.email) && firstName.equals(user.firstName)
-                && lastName.equals(user.lastName) && gender.equals(user.gender)
-                && personID.equals(user.personID);
+        return Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(email, user.email) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(gender, user.gender) && Objects.equals(personID, user.personID);
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(username, password, email, firstName, lastName, gender, personID);
     }
 

@@ -15,6 +15,12 @@ import java.util.Locale;
 public class FillHandler implements HttpHandler {
     public static final int DEFAULT_GENERATIONS = 4;
     Fill fill;
+
+    /**
+     * Handles calls to the /fill or /fill/[generations] api and all related operations
+     * @param exchange The http request object
+     * @throws IOException Signals issues with I/O
+     */
     @Override
     public void handle(HttpExchange exchange) throws IOException
     {
@@ -34,7 +40,7 @@ public class FillHandler implements HttpHandler {
                     //parse url to strings
                     int i = url.lastIndexOf("/");
                     String username = url.substring(6, i);
-                    String gen = url.substring(i+1, url.length());
+                    String gen = url.substring(i+1);
 
                     //FILL
                     FillRequest fillRequest = new FillRequest(username, Integer.parseInt(gen));
@@ -55,7 +61,7 @@ public class FillHandler implements HttpHandler {
                 //default generations
                 else if (url.matches("/fill/.*"))
                 {
-                    String username = url.substring(6, url.length());
+                    String username = url.substring(6);
                     //FILL
                     FillRequest fillRequest = new FillRequest(username, DEFAULT_GENERATIONS);
                     fill = new Fill(fillRequest);
@@ -80,7 +86,6 @@ public class FillHandler implements HttpHandler {
         }
         catch (IOException | DataAccessException e)
         {
-            //fixme
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
 
             OutputStream responseBody = exchange.getResponseBody();
@@ -93,6 +98,13 @@ public class FillHandler implements HttpHandler {
         }
     }
 
+    /**
+     * Reads in the character stream from the http request body and
+     * converts to string
+     * @param is Input stream
+     * @return Request body in string form
+     * @throws IOException Issues with I/O
+     */
     private String readString(InputStream is) throws IOException {
         StringBuilder sb = new StringBuilder();
         InputStreamReader sr = new InputStreamReader(is);
@@ -103,6 +115,13 @@ public class FillHandler implements HttpHandler {
         }
         return sb.toString();
     }
+
+    /**
+     * Writes string to output stream to be sent in response body
+     * @param str String to write
+     * @param os Output stream
+     * @throws IOException Issues with I/O
+     */
     private void writeString(String str, OutputStream os) throws IOException
     {
         OutputStreamWriter sw = new OutputStreamWriter(os);

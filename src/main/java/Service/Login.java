@@ -21,6 +21,10 @@ public class Login
     Database db;
     public Gson gson;
 
+    /**
+     * Constructor for Login
+     * @param request Request body string
+     */
     public Login(LoginRequest request)
     {
         this.result = new LoginResult();
@@ -33,6 +37,10 @@ public class Login
         gson = gsonBuilder.create();
     }
 
+    /**
+     * Logs the user in
+     * @throws DataAccessException Issues accessing info in database
+     */
     public void loginUser() throws DataAccessException
     {
         try

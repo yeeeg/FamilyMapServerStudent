@@ -9,11 +9,21 @@ import java.util.*;
 public class EventDAO {
     Connection connection;
 
+    /**
+     * Constructor for EventDAO
+     * @param connection Connection to the database
+     */
     public EventDAO(Connection connection)
     {
         this.connection = connection;
     }
 
+    /**
+     * Finds the event object associated with the provided eventID string
+     * @param eventID Provided eventID string
+     * @return Event object found in sql table
+     * @throws DataAccessException Error thrown when SQLException is thrown
+     */
     public Event find(String eventID) throws DataAccessException
     {
         Event event;
@@ -58,6 +68,12 @@ public class EventDAO {
         return event;
     }
 
+    /**
+     * Similar to find but gets all events associated with provided username
+     * @param a_UN Associated username used to find events
+     * @return Array of events associated to username
+     * @throws DataAccessException Triggered by SQLException
+     */
     public ArrayList<Event> getEvents(String a_UN) throws DataAccessException
     {
         ArrayList<Event> events = new ArrayList<>();
@@ -86,7 +102,6 @@ public class EventDAO {
             }
             else
             {
-                //FIXME this is a custom error
                 throw new DataAccessException("Error: No events exist for user.");
             }
         }
@@ -111,6 +126,11 @@ public class EventDAO {
         return events;
     }
 
+    /**
+     * Inserts event into the database
+     * @param event event object to insert
+     * @throws DataAccessException Triggered by SQLException
+     */
     public void insert(Event event) throws DataAccessException
     {
         String sql = "INSERT INTO events (event_id, a_UN, person_ID, " +
@@ -135,9 +155,12 @@ public class EventDAO {
             throw new DataAccessException("Error encountered while inserting Event into the database " + e.toString());
         }
     }
-    private void update(String sql)
-    {
-    }
+
+    /**
+     * Deletes all events from database associated with username
+     * @param username Provided username
+     * @throws DataAccessException Triggered by SQLException
+     */
     public void delete(String username) throws DataAccessException
     {
         String sql = "DELETE FROM events WHERE a_UN = ?;";

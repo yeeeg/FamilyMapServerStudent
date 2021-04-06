@@ -7,6 +7,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.UUID;
 
+/**
+ * Object to store register request data
+ */
 public class RegisterRequest
 {
     String requestBody;

@@ -1,6 +1,10 @@
 package Service.Result;
 import java.sql.*;
 import DAO.*;
+
+/**
+ * Object to store result of clear
+ */
 public class ClearResult
 {
     String message;

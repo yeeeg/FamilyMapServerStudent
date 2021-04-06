@@ -18,6 +18,10 @@ public class GetEvent
     Database db;
     public Gson gson;
 
+    /**
+     * Constructor for GetEvent
+     * @param eventID The ID for the event to be searched for
+     */
     public GetEvent(String eventID)
     {
         this.eventID = eventID;
@@ -27,6 +31,12 @@ public class GetEvent
         gson = gsonBuilder.create();
     }
 
+    /**
+     * Checks the provided authtoken and upon success finds the event associated
+     * with authtoken
+     * @param authtoken Authtoken string
+     * @throws DataAccessException Issues accessing database
+     */
     public void checkAuth(String authtoken) throws DataAccessException
     {
         try

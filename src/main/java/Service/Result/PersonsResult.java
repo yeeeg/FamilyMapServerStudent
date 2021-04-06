@@ -5,9 +5,12 @@ import Model.Person;
 
 import java.util.ArrayList;
 
+/**
+ * Stores results of persons service
+ */
 public class PersonsResult
 {
-    ArrayList<Person> data;
+    public ArrayList<Person> data;
     String message;
     boolean success;
 

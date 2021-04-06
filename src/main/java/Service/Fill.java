@@ -19,13 +19,10 @@ import java.sql.Connection;
 import java.util.*;
 
 /**
- * URL Path: /fill/[username]/{generations}
- * Example: /fill/susan/3
- *
  * Description: Populates the server's database with generated data for the specified user name.
  * The required "username" parameter must be a user already registered with the server.
  * If there is any data in the database already associated with the given user name, it is deleted.
- * The optional “generations” parameter lets the caller specify the number of generations of ancestors
+ * The optional "generations" parameter lets the caller specify the number of generations of ancestors
  * to be generated, and must be a non-negative integer (the default is 4, which results in 31 new persons each with
  * associated events).
  *
@@ -52,6 +49,10 @@ public class Fill
     ArrayList<Event> events = new ArrayList<>();
     int bound;
 
+    /**
+     * Constructor for Fill object
+     * @param request Fill request to initialize public FillRequest member
+     */
     public Fill(FillRequest request)
     {
         this.request = request;
@@ -64,6 +65,11 @@ public class Fill
         gsonBuilder.setPrettyPrinting();
         gson = gsonBuilder.create();
     }
+
+    /**
+     * Fills the database with generated data
+     * @throws DataAccessException Issue with database access
+     */
     public void doFill() throws DataAccessException
     {
         //first check for any data under provided username and clear it
@@ -104,8 +110,6 @@ public class Fill
 
             //create family members and their events
             createGenerations(userPerson, request.getGenerations(), DEFAULT_USER_BIRTH_YEAR);
-
-            //TODO OPTIONAL: make it so there are a random number of events between 3-n
 
             //add family members to database
             for (Person person : people)
@@ -204,9 +208,9 @@ public class Fill
 
     /**
      * Creates birth for provided person. Marriages are created separately.
-     * @param person
-     * @param birthYear
-     * @throws IOException
+     * @param person Provided person
+     * @param birthYear Provided birth year
+     * @throws IOException Issues with I/O
      */
     private void createBirth(Person person, int birthYear) throws IOException
     {
@@ -219,6 +223,12 @@ public class Fill
         events.add(birth);
     }
 
+    /**
+     * Gets a random name using provided json files
+     * @param path Path to json file
+     * @return Random name
+     * @throws IOException Issues with I/O
+     */
     private String randomName(String path) throws IOException
     {
         Reader reader = Files.newBufferedReader(Paths.get(path));
@@ -228,6 +238,11 @@ public class Fill
         return (String)names.get(rand.nextInt(names.size()));
     }
 
+    /**
+     * Gets a random location from the provided json file
+     * @return A random event with location data filled in
+     * @throws IOException Issues with I/O
+     */
     private Event randomLocation() throws IOException
     {
         Gson g = new Gson();
@@ -240,6 +255,12 @@ public class Fill
         return locations.get(rand.nextInt(locations.size()));
     }
 
+    /**
+     * Creates a parent birth year compatible with child birth requirements
+     * @param childBirthYear Child birth year
+     * @param female Whether or not parent is female
+     * @return Birth year
+     */
     private int genParentBirthYear(int childBirthYear, boolean female)
     {
         Random rand = new Random();
@@ -253,6 +274,16 @@ public class Fill
         }
     }
 
+    /**
+     * Creates two marriage events with same location and dates for a couple
+     * @param father Father object
+     * @param mother Mother object
+     * @param fatherBirth Father birth date
+     * @param motherBirth Mother birth date
+     * @param fatherDeath Father death date
+     * @param motherDeath Mother death date
+     * @throws IOException Issues with I/O
+     */
     private void createMarriage(Person father, Person mother, int fatherBirth, int motherBirth,
                                int fatherDeath, int motherDeath) throws IOException
     {
@@ -275,14 +306,25 @@ public class Fill
         events.add(motherMarriage);
     }
 
+    /**
+     * Create a marriage date based on birth date and death date
+     * @param latestBirth Most recent birth
+     * @param earliestDeath First occuring death
+     * @return Generated random marriage date
+     */
     private int genMarriageDate(int latestBirth, int earliestDeath)
     {
         Random rand = new Random();
         int valid_age = latestBirth + MIN_BIRTH_AGE;
-        int test = rand.nextInt((earliestDeath - valid_age) + 1) + valid_age;
-        return test;
+        return rand.nextInt((earliestDeath - valid_age) + 1) + valid_age;
     }
 
+    /**
+     * Create a death event for provided person
+     * @param person Person
+     * @param deathYear The generated year of death
+     * @throws IOException Issues with I/O
+     */
     private void createDeath(Person person, int deathYear) throws IOException
     {
         Event death = randomLocation();
@@ -290,11 +332,25 @@ public class Fill
                 "Death", deathYear);
         events.add(death);
     }
+
+    /**
+     * Generate random death date based on birth year and any childbirth restrictions
+     * @param birthYear Year of birth
+     * @param childBirth Year of childbirth
+     * @return Generated death date
+     */
     private int createDeathDate(int birthYear, int childBirth)
     {
         //death must be after childbirth and not more than 120 years after birth year
         Random rand = new Random();
         int maxDeath = Math.min(birthYear + MAX_AGE, CURRENT_YEAR);
         return rand.nextInt((maxDeath - childBirth) + 1) + childBirth;
+    }
+
+    public ArrayList<Person> getPeople() {
+        return people;
+    }
+    public ArrayList<Event> getEventsArray() {
+        return events;
     }
 }

@@ -15,10 +15,13 @@ import java.util.ArrayList;
 public class GetPersons
 {
     public PersonsResult result;
-    String username;
+    public String username;
     Database db;
     public Gson gson;
 
+    /**
+     * Constructor for GetPersons
+     */
     public GetPersons()
     {
         db = new Database();
@@ -26,6 +29,12 @@ public class GetPersons
         gsonBuilder.setPrettyPrinting();
         gson = gsonBuilder.create();
     }
+
+    /**
+     * Gets the username associated with the provided authtoken
+     * @param authtoken provided authtoken
+     * @throws DataAccessException Issues accessing database
+     */
     public void getAssociatedUN(String authtoken) throws DataAccessException
     {
         try
@@ -43,6 +52,11 @@ public class GetPersons
             throw new DataAccessException(e.getMessage());
         }
     }
+
+    /**
+     * Gets all persons associated with username member stored inside of GetPersons class
+     * @throws DataAccessException Issues accessing database
+     */
     public void doGet() throws DataAccessException
     {
         try

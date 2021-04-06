@@ -7,11 +7,21 @@ import Model.*;
 public class PersonDAO {
     public Connection connection;
 
+    /**
+     * Constructor for PersonDAO
+     * @param connection Connection to the database
+     */
     public PersonDAO(Connection connection)
     {
         this.connection = connection;
     }
 
+    /**
+     * Finds the person object associated with the personID
+     * @param personID The personID of the person to be found
+     * @return The person object made from data in the table
+     * @throws DataAccessException Triggered by SQLException
+     */
     public Person getPerson(String personID) throws DataAccessException
     {
         Person person;
@@ -30,7 +40,6 @@ public class PersonDAO {
             }
             else
             {
-                //fixme
                 throw new DataAccessException("Error: Invalid personID parameter");
             }
         }
@@ -55,6 +64,14 @@ public class PersonDAO {
 
         return person;
     }
+
+    /**
+     * Similar to getPerson but instead returns all person objects associated
+     * with the provided username
+     * @param a_UN The provided username
+     * @return ArrayList of person objects associated with username
+     * @throws DataAccessException Triggered by SQLException
+     */
     public ArrayList<Person> getPersons(String a_UN) throws DataAccessException
     {
         ArrayList<Person> persons = new ArrayList<>();
@@ -82,7 +99,6 @@ public class PersonDAO {
             }
             else
             {
-                //FIXME this is a custom error
                 throw new DataAccessException("Error: No persons exist for user.");
             }
         }
@@ -107,6 +123,11 @@ public class PersonDAO {
         return persons;
     }
 
+    /**
+     * Inserts a person into the database
+     * @param person The person object to be inserted
+     * @throws DataAccessException Triggered by SQLException
+     */
     public void insert(Person person) throws DataAccessException
     {
         String sql = "INSERT INTO persons (person_id, first_name, last_name, " +
@@ -133,6 +154,11 @@ public class PersonDAO {
         }
     }
 
+    /**
+     * Deletes everything that contains the provided username from the persons table
+     * @param username Provided username
+     * @throws DataAccessException Triggered by SQLException
+     */
     public void delete(String username) throws DataAccessException
     {
         String sql = "DELETE FROM persons WHERE a_UN = ?;";

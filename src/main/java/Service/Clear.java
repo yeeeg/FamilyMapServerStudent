@@ -14,6 +14,9 @@ public class Clear
     Database db;
     public Gson gson;
 
+    /**
+     * Constructor for Clear object
+     */
     public Clear()
     {
         this.result = new ClearResult();

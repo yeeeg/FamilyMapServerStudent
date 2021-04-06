@@ -17,6 +17,11 @@ public class Database
     public UserDAO userDAO;
     public String authtoken;
 
+    /**
+     * Opens the connection to the database
+     * @return The connection to the database
+     * @throws DataAccessException Triggered by SQLException
+     */
     public Connection openConnection() throws DataAccessException
     {
         try
@@ -36,6 +41,11 @@ public class Database
         return conn;
     }
 
+    /**
+     * Gets the connection to the database
+     * @return connection to the database
+     * @throws DataAccessException Triggered by SQLException
+     */
     public Connection getConn() throws DataAccessException
     {
         if (conn == null)
@@ -48,6 +58,11 @@ public class Database
         }
     }
 
+    /**
+     * Close the connection to the database
+     * @param commit Decides whether or not database should commit changes to database
+     * @throws DataAccessException Triggered by SQLException
+     */
     public void closeConnection(boolean commit) throws DataAccessException
     {
         try
@@ -65,6 +80,10 @@ public class Database
         }
     }
 
+    /**
+     * Clears all data from all tables in database
+     * @throws DataAccessException Triggered by SQLException
+     */
     public void clearTables() throws DataAccessException
     {
         try (Statement stmt = conn.createStatement())
@@ -85,12 +104,5 @@ public class Database
         {
             throw new DataAccessException("SQL Error encountered while clearing tables");
         }
-
     }
-
-    public String genAuthtoken()
-    {
-        return UUID.randomUUID().toString();
-    }
-
 }

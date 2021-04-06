@@ -3,8 +3,7 @@ package Service.Result;
 import Model.*;
 
 /**
- * Used for both /event and /event/eventID
- * EventsResult stores values from EventResult into an array
+ * Stores results from Event service
  */
 public class EventResult
 {
@@ -19,8 +18,6 @@ public class EventResult
     Integer year;
     String message;
     boolean success;
-
-    public EventResult() {}
 
     public EventResult(Event event, boolean success)
     {

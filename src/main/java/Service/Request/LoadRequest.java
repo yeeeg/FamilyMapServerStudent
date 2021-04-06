@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * Object to store load request data
+ */
 public class LoadRequest
 {
     String requestBody;

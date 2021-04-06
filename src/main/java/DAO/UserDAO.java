@@ -1,10 +1,8 @@
 package DAO;
-import java.io.File;
-import java.sql.*;
-import Model.*;
-import Service.Result.RegisterResult;
 
-import javax.xml.crypto.Data;
+import Model.AuthToken;
+import Model.User;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,14 +12,13 @@ import java.util.UUID;
 public class UserDAO {
     Connection connection;
 
+    /**
+     * Constructor for UserDAO
+     * @param connection The connection to the database
+     */
     public UserDAO(Connection connection)
     {
         this.connection = connection;
-    }
-
-    public void clear()
-    {
-
     }
 
     /**
@@ -80,6 +77,12 @@ public class UserDAO {
         }
         return authtoken;
     }
+
+    /**
+     * Inserts user into the database
+     * @param user User to insert
+     * @throws DataAccessException Triggered by SQLException
+     */
     public void insert(User user) throws DataAccessException
     {
         String sql = "INSERT INTO users (username, password, email, first_name, last_name, gender, person_id) " +
@@ -101,9 +104,12 @@ public class UserDAO {
             throw new DataAccessException("Error encountered while inserting User into the database");
         }
     }
-    private void update(String sql)
-    {
-    }
+
+    /**
+     * Deletes user from db
+     * @param username Provided username
+     * @throws DataAccessException Triggered by SQLException
+     */
     public void delete(String username) throws DataAccessException
     {
         String sql = "DELETE FROM users WHERE username = ?;";
@@ -118,6 +124,12 @@ public class UserDAO {
         }
     }
 
+    /**
+     * Gets the user associated with the provided username from the db
+     * @param username The provided username
+     * @return User object created by db info
+     * @throws DataAccessException Triggered by SQLException
+     */
     public User getUser(String username) throws DataAccessException
     {
         User user;

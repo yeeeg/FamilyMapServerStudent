@@ -1,5 +1,8 @@
 package Service.Result;
 
+/**
+ * Stores results of login service
+ */
 public class LoginResult
 {
     String authtoken;

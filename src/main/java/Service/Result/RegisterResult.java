@@ -2,6 +2,9 @@ package Service.Result;
 
 import java.util.Objects;
 
+/**
+ * Stores results of register service
+ */
 public class RegisterResult
 {
     String authtoken;

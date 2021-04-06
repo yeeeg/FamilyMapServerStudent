@@ -18,6 +18,10 @@ public class GetPerson
     Database db;
     public Gson gson;
 
+    /**
+     * Constructor for GetPerson
+     * @param personID The ID of the person to be found
+     */
     public GetPerson(String personID)
     {
         this.personID = personID;
@@ -26,6 +30,12 @@ public class GetPerson
         gsonBuilder.setPrettyPrinting();
         gson = gsonBuilder.create();
     }
+
+    /**
+     * Checks if authtoken is valid and finds person upon success
+     * @param authtoken Provided authtoken
+     * @throws DataAccessException Issues accessing database
+     */
     public void checkAuth(String authtoken) throws DataAccessException
     {
         try

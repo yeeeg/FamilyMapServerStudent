@@ -8,6 +8,9 @@ import com.google.gson.GsonBuilder;
 
 import java.util.UUID;
 
+/**
+ * Object to store login request data
+ */
 public class LoginRequest
 {
     String requestBody;
